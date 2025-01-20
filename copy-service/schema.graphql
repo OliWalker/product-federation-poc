@@ -1,0 +1,11 @@
+# Here we are just extending the type Product from the assortment-service schema.
+# That means we expose no data of our own, we just enhance the data of the products
+# that are returned from the assortment-service, knowing that the assortment-service
+# knows the logic best of which clients can see which products.
+
+extend type Product @key(fields: "sku") {
+  sku: ID! @external
+  # Here we enhance the Product type with our data, what we know about the product
+  name: String!
+  description: String!
+}

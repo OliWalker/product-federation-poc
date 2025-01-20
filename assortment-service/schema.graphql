@@ -1,0 +1,15 @@
+# Here we declare the type of Product. In the assortment-service we know which clients can
+# see which products, so by us taking ownership of the Product type, we can prevent sub-graphs
+# from exposing data of products that certain clients should not see.
+# All clients have to come through us, and follow our rules, over who can see which part of the assortment.
+
+type Product @key(fields: "sku") {
+  sku: ID!
+}
+
+# Here we declare the Query types, which are the entry points to the Product.
+# We control the entry points, we control who can see which Product.
+type Query {
+  product(sku: ID!): Product
+  products(skus: [ID]): [Product]
+}

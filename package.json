@@ -1,0 +1,29 @@
+{
+  "name": "federation",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "asset-service:start": "node asset-service/index.ts",
+    "assortment-service:start": "node assortment-service/index.ts",
+    "copy-service:start": "node copy-service/index.ts",
+    "core-data-service:start": "node core-data-service/index.ts",
+    "supergraph:start": "node supergraph/index.ts",
+    "website:start": "http-server ./website -p 3000",
+    "dev": "ttab npm run asset-service:start && ttab npm run assortment-service:start && ttab npm run copy-service:start && ttab npm run core-data-service:start && ttab npm run supergraph:start && npm run website:start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@apollo/gateway": "^2.9.3",
+    "@apollo/server": "^4.11.3",
+    "@apollo/subgraph": "^2.9.3",
+    "@graphql-tools/load-files": "^7.0.1",
+    "@graphql-tools/merge": "^9.0.17",
+    "express": "^4.21.2",
+    "http-server": "^14.1.1",
+    "npm-run-all": "^4.1.5"
+  }
+}

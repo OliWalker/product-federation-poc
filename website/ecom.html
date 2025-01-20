@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ecom Store</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <style>
+      header {
+        background-color: #ffc83a;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>ECOM store</h1>
+      <p>Explore our curated selection of publicly available products</p>
+    </header>
+    <main>
+      <h3>GraphQL Query used to fetch the products:</h3>
+      <pre>
+      query Products {
+        products (skus: []) {
+          sku
+          color
+          thumbnail
+          weight
+          name
+          description
+        }
+      }
+      </pre>
+      <h1>Product data returned:</h1>
+      <div class="product-list"></div>
+    </main>
+  </body>
+</html>
+<script src="./index.js"></script>
