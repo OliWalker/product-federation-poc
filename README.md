@@ -14,6 +14,11 @@ This approach de-centralizes the data, allowing experts to expose their slice, w
 
 While data is de-centralized, living alongside the experts in the domain, Authentication, and which clients we serve, is centralized, since all sub-domains should have the same source of clientel.
 
+## Diagram
+
+![Federation Diagram](./federation.webp)
+
+
 ## Quick start
 
 To get the repo set up simply:
