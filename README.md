@@ -6,13 +6,7 @@ This is a POC demonstration of how we can leverage GraphQL federation within the
 
 Using Federation allows for a single point of consumption of a global product model, while still allowing Authorization, Governance and Business logic to live within a sub-domain, where it belongs.
 
-It enables teams to expose, govern and tailor their data to specific clients, without having to repeat this logic elsewhere.
-
-The nature of Federation means there is a single entry point for Authentication, for all sub-domain services.
-
-This approach de-centralizes the data, allowing experts to expose their slice, while still being consumed from a single point, with a single authentication method.
-
-While data is de-centralized, living alongside the experts in the domain, Authentication, and which clients we serve, is centralized, since all sub-domains should have the same source of clientel.
+It enables teams to expose, govern and tailor their data to specific clients, without having to repeat this logic elsewhere, de-centralizing the data and allowing experts to expose / govern their slice, while still being consumed from a single entry point, with a single place to verify and Authorize users.
 
 ## Diagram
 
@@ -64,56 +58,58 @@ Each of the other sub-graphs are domain services that:
   
 ## Concepts overview
 
-* Each client can recieve different data for the same query
-* Authentication* is handled in the Supergraph
-* Which skus are available to you is handled gracefully only in the assortment service sub-graph
-* No sub-graphs can be queried directly, only via the assortment-service, to ensure you can only see what you are allowed to
-* Field level logic (what to display per client) is handled in the relevant sub-graph service for that domain
+* Each client requesting the api can recieve different data for the same query
+* Verification of the JWT authentication is handled in the Supergraph
+* Which skus are authorized for you is handled gracefully only in the assortment service sub-graph
+* No sub-graphs for product data can be queried directly, only via the assortment-service, to ensure you can only see what you are authorized to
+* Field level authorization (what to display for each client) is handled in the relevant sub-graph service for that domain
 
-/* No authentication has been implemented, just passing a header to the sub-graphs
+/* No verification has been implemented in the POC, we just pass a header to the sub-graphs
 
 ## The request flow
 
-1) The client makes a query, it adds its "authentication" parameters, if needed, to the request.
-2) The Supergraph receives the query, it:
-    * validates the authentication and ensures the scope is correct (is the user who is requesting B2B data actually a B2B app?)
-    * passes the authentication credentials to the sub-graphs
-3) The request first goes to the `assortment-service` as this declares the Graphql Type for the Product it:
-    * validates which client is requesting the product/s
-    * holds the logic with which client can see which products
-    * only returns the data that client is able to see
-4) From the products that are returned from the `assortment-service` (that the client can see) graphql then fills in the rest of the data from the sub-domains
-5) Each sub-domain handles its own logic for returning data, because each sub-domain knows best who should see what, so it:
-    * validates which client is requesting the field/s
-    * chooses from its data which point to return for said field
+1) The client Authenticates itself with an Authentication server (not implemented)
+2) Authentication server returns a JWT to the client with its Authorization params (including ClientId)
+3) The client makes a query sending it adds its query and JWT, to the supergraph.
+4) The Supergraph receives the query, it:
+    * verifies the JWT tocken and ensures the scope is correct (is the user who is requesting B2B data actually a B2B app?)
+    * passes the authorization credentials (clientId) to the sub-graphs
+5) The request first goes to the `assortment-service` as this declares the Graphql Query for the Product it:
+    * verifies which client is requesting the product/s
+    * holds the logic with which client is authorized to see which products
+    * only returns the products that client is authorized to see
+6) From the products that are returned from the `assortment-service` the supergraph then fills in the rest of the data from the sub-graphs
+7) Each sub-domain handles its own logic for returning data, because each sub-domain knows best who should see what, so it:
+    * verifies which client is requesting the field/s
+    * returns the data for that field depending on what data the client is authorized to see.
 
 
 ## Concepts in more detail
 
-### Each client can recieve different data for the same query
+### Each client requesting the api can recieve different data for the same query
 
-This allow us to have an external facing schema, that is still able to be personalized on a variety of factors. The client does not have to worry about the personalization logic, allowing them to be thin.
+This allows us to have an external schema, that is still able to be personalized on a variety of factors. The client does not have to worry about the personalization logic, allowing them to be thin. This is instead handled by the sub-domain that has the best knowledge over that field.
 
-### Authentication* is handled in the Supergraph
+### Verification of the JWT authentication is handled in the Supergraph
 
-The Supergraph is the entry point for all requests, here we can validate JWT and pass down the line which client is requesting the data to the sub-graphs. The sub-graphs can then perform even more validation or they can trust the supergraph (TBD). 
+The Supergraph is the entry point for all requests, here we can validate JWT and pass down the line which client is requesting the data to the sub-graphs.
 
-### Which skus are available to you is handled gracefully only in the assortment service sub-graph
+### Which skus are authorized for you is handled gracefully only in the assortment service sub-graph
 and 
-### No sub-graphs can be queried directly, only via the assortment-service, to ensure you can only see what you are allowed to
+### No sub-graphs for product data can be queried directly, only via the assortment-service, to ensure you can only see what you are authorized to
 
-The assortment domain and their team know best about which clients can see which products. Their job is to validate the client requesting the data and work out which products to show to the user. This is important as all requests will go through the assortment-service, since it declares the type of the Product. 
+The assortment domain and their team know best about which clients can see which products. Their job is to validate the client requesting the data and work out which products to show to the user. This is important as all requests will go through the assortment-service, since it declares the query for the Product. 
 
-If the user cannot see the product, the assortment-service simply returns null if the user cannot see the specific product they are requesting, or omits it from a list of products.
+If the user is not authorized see the product, the assortment-service simply returns null or omits it from a list of products.
 
 If the assortment service returns null, the other services are not queried to fill in the rest of the data.
 
 
-### Field level logic (what to display per client) is handled in the relevant sub-graph service for that domain
+### Field level authorization (what to display for each client) is handled in the relevant sub-graph service for that domain
 
 The Sub Domains know their domain best. They know which data to provide to which client. It is their responsibility to provide their slice of the Product to the Supergraph.
 
-Sub Domains expose a generic graph, that does not have to match their internal representation of the data. This means all clients can query the same field of the graph and still receive different results. e.g
+Sub Domains expose an external schema, that does not have to match their internal representation of the data. This means all clients can query the same field of the graph and still receive different results. e.g
 
 * The copy subdomain has different copy for Ecom and B2B (true in On right now)
 * The copy subdomain structures its internal data with these fields seperate (e.g: copyD2C and copyB2B) however they feel is best for their service.
@@ -124,5 +120,5 @@ Sub Domains expose a generic graph, that does not have to match their internal r
 
 This keeps the business logic within the sub-domain, which is the best team to handle this.
 
-The same can be applied to governance, if a user should not be able to see a specific field, they can just return null.
+The same can be applied to governance, if a user should not be able to see a specific field, they can just return null, or throw an error, to "hide" the field.
 
