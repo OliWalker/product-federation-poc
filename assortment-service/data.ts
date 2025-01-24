@@ -8,3 +8,11 @@ export const products = [
   { sku: "4" },
   { sku: "5" },
 ];
+
+// Each service also keeps a list of clients that it supports, this can be different depending on its needs.
+
+export const clients = {
+  PUBLIC: "PUBLIC",
+  PARTNER: "PARTNER",
+  B2B: "B2B",
+} as const;

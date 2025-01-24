@@ -48,3 +48,11 @@ export const products = [
       "https://library.on.com/transform/d384005a-c915-41f3-8cf2-0200d9c94193/55-98204-cloudgo-ss23-iron_frost-w-g2",
   },
 ];
+
+// Each service also keeps a list of clients that it supports, this can be different depending on its needs.
+
+export const clients = {
+  PUBLIC: "PUBLIC",
+  PARTNER: "PARTNER",
+  B2B: "B2B",
+} as const;

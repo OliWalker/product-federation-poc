@@ -42,7 +42,7 @@ The graphql playground in `http://localhost:4000`
 * Each of the 3 mini sites use the **same query** but display **data tailored** to their needs
 * To replicate this in the grapql playground you can add the headers of:
 ```
-client-name: 'B2B' | 'PARTNER' | 'PUBLIC'
+client-id: 'B2B' | 'PARTNER' | 'PUBLIC'
 ```
 
 ## Around the repo

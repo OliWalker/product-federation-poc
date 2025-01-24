@@ -3,14 +3,15 @@ import { expressMiddleware } from "@apollo/server/express4";
 import cors from "cors";
 import { ApolloServer } from "@apollo/server";
 import { ApolloGateway, RemoteGraphQLDataSource } from "@apollo/gateway";
-import { CLIENT_NAME_HEADER } from "../clients.ts";
+import { CLIENT_ID_HEADER } from "../clients.ts";
 
-// This is needed to pass headers from the incoming request to the supergraph to the
-// subsequent requests to the sub-graphs. We will likely be using JWT tokens in the headers
-// rather then just the client name.
+// Here we pass the validated Client Id to the sub-graphs so they can
+// make decisions on which data to show based on which client they are serving.
+// The verification of this header is done in a middleware function in the supergraph
+// so that all requests are validated.
 class ClientEnhancedDataSource extends RemoteGraphQLDataSource {
   willSendRequest({ request, context }) {
-    request.http.headers.set(CLIENT_NAME_HEADER, context.clientName);
+    request.http.headers.set(CLIENT_ID_HEADER, context.clientId);
   }
 }
 
@@ -40,10 +41,9 @@ app.use(
   "/",
   expressMiddleware(server, {
     context: async ({ req }) => ({
-      // Here we have the authentication logic to validate which client is making the request
-      // and potentially which user.
-      // For simplicity, now we are just passing the client name in the header.
-      clientName: req.headers[CLIENT_NAME_HEADER],
+      // Here, we have the validation that the JWT is signed by our Authentication service and has a reference to the
+      // Client Id. For simplicity, now we are just passing the client id in the header.
+      clientId: req.headers[CLIENT_ID_HEADER],
     }),
   })
 );

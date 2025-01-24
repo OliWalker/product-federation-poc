@@ -1,5 +1,4 @@
-import { CLIENTS } from "../clients.ts";
-import { products } from "./data.ts";
+import { products, clients } from "./data.ts";
 
 // Here would be the complex business logic to decide which clients can see which assortment.
 // Because this service declares the type and the query, all requests for products will go through this service.
@@ -7,11 +6,11 @@ import { products } from "./data.ts";
 // Obviously this is a very simple example of how an assortment service could work...
 function clientAvailableSkus(client: string) {
   switch (client) {
-    case CLIENTS.B2B:
+    case clients.B2B:
       return ["1", "2", "3", "4", "5"];
-    case CLIENTS.PARTNER:
+    case clients.PARTNER:
       return ["1", "2", "3"];
-    case CLIENTS.PUBLIC:
+    case clients.PUBLIC:
     default:
       return ["1", "2"];
   }
@@ -19,17 +18,17 @@ function clientAvailableSkus(client: string) {
 
 export const resolvers = {
   Query: {
-    product: (_, { sku }, { clientName }) => {
+    product: (_, { sku }, { clientId }) => {
       // These are the querys where we can control which products the client can see.
       // Here is where we filter the complete list of products, to those which are available in
       // the requesting clients context.
-      const clientSkus = clientAvailableSkus(clientName);
+      const clientSkus = clientAvailableSkus(clientId);
       const product = products.find((p) => p.sku === sku);
       if (clientSkus.includes(sku)) return product;
       return null;
     },
-    products: (_, { skus = [] }, { clientName }) => {
-      const clientSkus = clientAvailableSkus(clientName);
+    products: (_, { skus = [] }, { clientId }) => {
+      const clientSkus = clientAvailableSkus(clientId);
 
       const availableSkus =
         skus.length > 0

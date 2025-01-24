@@ -11,19 +11,19 @@ const query = `
       }
   `;
 
-function getClientName() {
+function getclientId() {
   const pathname = window.location.pathname;
-  const clientName = pathname.split("/").pop().split(".")[0];
-  return clientName.toUpperCase();
+  const clientId = pathname.split("/").pop().split(".")[0];
+  return clientId.toUpperCase();
 }
 
 async function getProducts() {
-  const clientName = getClientName();
+  const clientId = getclientId();
   const response = await fetch("http://localhost:4000/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "client-name": clientName,
+      "client-id": clientId,
     },
     body: JSON.stringify({ query }),
   });

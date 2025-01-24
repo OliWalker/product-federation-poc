@@ -5,7 +5,7 @@ import { buildSubgraphSchema } from "@apollo/subgraph";
 import { loadFilesSync } from "@graphql-tools/load-files";
 import { mergeTypeDefs } from "@graphql-tools/merge";
 import { resolvers } from "./resolvers.ts";
-import { CLIENT_NAME_HEADER } from "../clients.ts";
+import { CLIENT_ID_HEADER } from "../clients.ts";
 
 const typeDefs = mergeTypeDefs(
   loadFilesSync("core-data-service/schema.graphql")

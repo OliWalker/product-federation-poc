@@ -53,3 +53,11 @@ export const products = [
       "Go-to running shoe with a smooth ride and comfortable fit, perfect for daily training.",
   },
 ];
+
+// Each service also keeps a list of clients that it supports, this can be different depending on its needs.
+
+export const clients = {
+  PUBLIC: "PUBLIC",
+  PARTNER: "PARTNER",
+  B2B: "B2B",
+} as const;
