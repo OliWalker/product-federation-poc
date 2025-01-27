@@ -1,9 +1,15 @@
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.9"
+    import: ["@key", "@external", "@shareable"]
+  )
+
 # Here we declare the type of Product. In the assortment-service we know which clients can
 # see which products, so by us taking ownership of the Product type, we can prevent sub-graphs
 # from exposing data of products that certain clients should not see.
 # All clients have to come through us, and follow our rules, over who can see which part of the assortment.
 
-type Product @key(fields: "sku") {
+type Product @key(fields: "sku") @shareable {
   sku: ID!
 }
 
