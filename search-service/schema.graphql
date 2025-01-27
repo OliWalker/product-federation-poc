@@ -1,0 +1,26 @@
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.9"
+    import: ["@key", "@extends", "@external"]
+  )
+
+# Here we are just extending the type Product from the assortment-service schema.
+# That means we expose no data of our own, we just enhance the data of the products
+# that are returned from the assortment-service, knowing that the assortment-service
+# knows the logic best of which clients can see which products.
+
+# type Product @key(fields: "sku", resolvable: false) {
+#   sku: ID! @external
+# }
+
+extend type Product @key(fields: "sku") {
+  sku: ID! @external
+}
+
+type SearchIndex {
+  products: [Product]
+}
+
+type Query {
+  searchIndex: SearchIndex
+}

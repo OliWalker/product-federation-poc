@@ -21,6 +21,7 @@ const gateway = new ApolloGateway({
     { name: "assortment-service", url: "http://localhost:4002/" },
     { name: "copy-service", url: "http://localhost:4003/" },
     { name: "core-data-service", url: "http://localhost:4004/" },
+    { name: "search-service", url: "http://localhost:4005/" },
   ],
   buildService({ url }) {
     return new ClientEnhancedDataSource({ url });
@@ -43,6 +44,7 @@ app.use(
     context: async ({ req }) => ({
       // Here, we have the validation that the JWT is signed by our Authentication service and has a reference to the
       // Client Id. For simplicity, now we are just passing the client id in the header.
+      // This is more of a scope
       clientId: req.headers[CLIENT_ID_HEADER],
     }),
   })

@@ -8,9 +8,10 @@
     "assortment-service:start": "node assortment-service/index.ts",
     "copy-service:start": "node copy-service/index.ts",
     "core-data-service:start": "node core-data-service/index.ts",
+    "search-service:start": "node search-service/index.ts",
     "supergraph:start": "node supergraph/index.ts",
     "website:start": "http-server ./website -p 3000",
-    "dev": "ttab npm run asset-service:start && ttab npm run assortment-service:start && ttab npm run copy-service:start && ttab npm run core-data-service:start && ttab npm run supergraph:start && npm run website:start"
+    "dev": "ttab npm run asset-service:start && ttab npm run assortment-service:start && ttab npm run copy-service:start && ttab npm run core-data-service:start && ttab npm run search-service:start && ttab npm run supergraph:start && npm run website:start"
   },
   "keywords": [],
   "author": "",
